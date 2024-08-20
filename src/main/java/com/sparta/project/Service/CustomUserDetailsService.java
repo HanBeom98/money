@@ -1,4 +1,4 @@
-package com.sparta.project.service;
+package com.sparta.project.Service;
 
 import com.sparta.project.User.User;
 import com.sparta.project.User.UserRepository;

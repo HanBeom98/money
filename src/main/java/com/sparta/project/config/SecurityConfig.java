@@ -2,7 +2,7 @@ package com.sparta.project.config;
 
 import com.sparta.project.JWT.JwtAuthenticationFilter;
 import com.sparta.project.JWT.JwtTokenProvider;
-import com.sparta.project.service.CustomUserDetailsService;
+import com.sparta.project.Service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

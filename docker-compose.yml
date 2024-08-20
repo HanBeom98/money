@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://money.cf68ywkkk900.ap-northeast-2.rds.amazonaws.com:3306/money?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root                    # RDS 마스터 사용자 이름
+      SPRING_DATASOURCE_PASSWORD: gksqja9691              # RDS 마스터 사용자 비밀번호
