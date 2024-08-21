@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,26 +21,32 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        String email = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
-        String picture = oAuth2User.getAttribute("picture"); // 프로필 사진 URL
+        // 사용자 정보 가져오기
+        Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
+        Map<String, Object> properties = (Map<String, Object>) oAuth2User.getAttributes().get("properties");
 
-        // 사용자 정보가 이미 있는지 확인
+        String email = (String) kakaoAccount.get("email");
+        String nickname = (String) properties.get("nickname");
+        String picture = properties != null ? (String) properties.get("profile_image") : null;
+
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email not found from OAuth2 provider");
+        }
+
         Optional<User> existingUser = userRepository.findByEmail(email);
 
         if (existingUser.isPresent()) {
-            // 사용자 정보 업데이트
             User user = existingUser.get();
-            user.setName(name); // 이름 업데이트
-            user.setProfilePicture(picture); // 프로필 사진 업데이트 (필드 추가 필요)
+            user.setName(nickname);
+            user.setProfilePicture(picture);
             userRepository.save(user);
         } else {
-            // 없으면 새로운 사용자 저장
             User newUser = new User();
             newUser.setEmail(email);
-            newUser.setName(name);
-            newUser.setProfilePicture(picture); // 프로필 사진 저장
-            newUser.setRole(User.Role.USER);  // 기본 역할 설정
+            newUser.setName(nickname);
+            newUser.setProfilePicture(picture);
+            newUser.setRole(User.Role.USER);
+            newUser.setPassword(null);  // 비밀번호를 설정하지 않음
             userRepository.save(newUser);
         }
 

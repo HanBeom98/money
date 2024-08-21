@@ -16,8 +16,13 @@ public class User {
     private Long id;
 
     private String name;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = true)  // 비밀번호를 nullable로 설정하여 소셜 로그인 시 비밀번호 없이 생성 가능
     private String password;
+
     private String lastLoginIp;
     private String lastLoginAgent;
     private String profilePicture;

@@ -3,6 +3,7 @@ package com.sparta.project.config;
 import com.sparta.project.JWT.JwtAuthenticationFilter;
 import com.sparta.project.JWT.JwtTokenProvider;
 import com.sparta.project.Service.CustomUserDetailsService;
+import com.sparta.project.Service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,10 +14,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -26,10 +23,12 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService userDetailsService;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, CustomUserDetailsService userDetailsService, CustomOAuth2UserService customOAuth2UserService) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailsService = userDetailsService;
+        this.customOAuth2UserService = customOAuth2UserService;
     }
 
     @Bean
@@ -43,11 +42,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
-        return new DefaultOAuth2UserService();
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -57,14 +51,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/videos/**").permitAll()
                         .requestMatchers("/api/advertisements/**").permitAll()
-                        .requestMatchers("/api/auth/login", "/oauth2/**").permitAll()  // 로컬 로그인과 소셜 로그인 허용
+                        .requestMatchers("/api/auth/login", "/oauth2/**").permitAll()  // 로컬 로그인과 카카오 로그인 허용
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2  // OAuth2 로그인 설정
-                        .defaultSuccessUrl("/home")  // 로그인 성공 후 리디렉션될 URL 설정
+                        .defaultSuccessUrl("/api/users", true)  // 로그인 성공 후 리디렉션될 URL 설정
                         .failureUrl("/login?error=true")  // 로그인 실패 시 리디렉션될 URL 설정
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(oAuth2UserService())
+                                .userService(customOAuth2UserService)  // 카카오 사용자 정보 서비스
                         )
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class);
