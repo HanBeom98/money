@@ -24,13 +24,11 @@ public class VideoService {
     }
 
     public Video saveVideoWithUpload(String title, String description, String filePath) {
-        // S3에 파일을 업로드하고 URL을 가져옴
         String bucketName = "chohanbeom-bucket"; // 실제 S3 버킷 이름으로 변경하세요
         String keyName = "videos/" + title.replaceAll(" ", "_"); // 파일의 고유한 키 설정
 
         String url = s3Service.uploadFileAndGetUrl(bucketName, keyName, filePath);
 
-        // URL을 사용해 Video 엔터티를 생성하고 데이터베이스에 저장
         Video video = new Video(title, description, url);
         return videoRepository.save(video);
     }
