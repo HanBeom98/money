@@ -5,7 +5,7 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Copy the built jar file into the container
-COPY project-0.0.1-SNAPSHOT.jar app.jar
+COPY build/libs/project-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the port that your Spring Boot app runs on
 EXPOSE 8080

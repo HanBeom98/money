@@ -22,6 +22,11 @@ public class VideoController {
         return videoService.saveVideo(video);
     }
 
+    @PostMapping("/upload")
+    public Video uploadVideo(@RequestParam String title, @RequestParam String description, @RequestParam String filePath) {
+        return videoService.saveVideoWithUpload(title, description, filePath);
+    }
+
     @GetMapping("/{id}")
     public Video getVideoById(@PathVariable Long id) {
         return videoService.findVideoById(id);

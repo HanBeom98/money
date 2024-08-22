@@ -22,25 +22,40 @@ ext {
 }
 
 dependencies {
+    // Spring Boot 기본 종속성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web' // Spring MVC
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // JWT 종속성
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // Spring Cloud 관련 종속성
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer'
+
+    // Lombok
     implementation 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // AWS SDK for Java (S3)
+    implementation 'software.amazon.awssdk:s3:2.20.0' // AWS S3 연동을 위한 SDK 추가
+
+    // 개발 전용 종속성
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // MySQL JDBC 드라이버
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // 테스트 종속성
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-
 
 dependencyManagement {
     imports {
