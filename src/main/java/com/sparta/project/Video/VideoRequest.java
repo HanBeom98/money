@@ -5,7 +5,17 @@ public class VideoRequest {
     private String description;
     private String filePath;
 
-    // Getters and setters
+    // 기본 생성자
+    public VideoRequest() {}
+
+    // 파라미터 생성자
+    public VideoRequest(String title, String description, String filePath) {
+        this.title = title;
+        this.description = description;
+        this.filePath = filePath;
+    }
+
+    // Getter와 Setter
     public String getTitle() {
         return title;
     }

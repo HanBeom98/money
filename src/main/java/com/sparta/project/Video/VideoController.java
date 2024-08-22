@@ -24,11 +24,7 @@ public class VideoController {
 
     @PostMapping("/upload")
     public Video uploadVideo(@RequestBody VideoRequest videoRequest) {
-        return videoService.saveVideoWithUpload(
-                videoRequest.getTitle(),
-                videoRequest.getDescription(),
-                videoRequest.getFilePath()
-        );
+        return videoService.saveVideoWithUpload(videoRequest.getTitle(), videoRequest.getDescription(), videoRequest.getFilePath());
     }
 
     @GetMapping("/{id}")
