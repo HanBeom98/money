@@ -1,6 +1,10 @@
-package com.sparta.project.ViewHistory;
+package com.sparta.project.ViewHistory;// ViewHistoryController.java
 
+import com.sparta.project.ViewHistory.ViewHistory;
+import com.sparta.project.ViewHistory.ViewHistoryDto;
+import com.sparta.project.ViewHistory.ViewHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,24 +17,27 @@ public class ViewHistoryController {
     private ViewHistoryService viewHistoryService;
 
     @GetMapping
-    public List<ViewHistory> getAllViewHistories() {
-        return viewHistoryService.findAllViewHistories();
+    public ResponseEntity<List<ViewHistoryDto>> getAllViewHistories() {
+        List<ViewHistoryDto> viewHistories = viewHistoryService.findAllViewHistories();
+        return ResponseEntity.ok(viewHistories);
     }
 
     @PostMapping
-    public ViewHistory createViewHistory(@RequestBody ViewHistory viewHistory) {
-        return viewHistoryService.saveViewHistory(viewHistory);
+    public ResponseEntity<ViewHistoryDto> createViewHistory(@RequestBody ViewHistoryDto viewHistoryDto) {
+        ViewHistoryDto createdHistory = viewHistoryService.saveViewHistory(viewHistoryDto);
+        return ResponseEntity.ok(createdHistory);
     }
 
     @GetMapping("/{id}")
-    public ViewHistory getViewHistoryById(@PathVariable Long id) {
-        return viewHistoryService.findViewHistoryById(id);
+    public ResponseEntity<ViewHistoryDto> getViewHistoryById(@PathVariable Long id) {
+        ViewHistoryDto viewHistoryDto = viewHistoryService.entityToDto(viewHistoryService.findViewHistoryById(id));
+        return ResponseEntity.ok(viewHistoryDto);
     }
 
-    // 비디오 재생 시점 업데이트 API
     @PutMapping("/{id}/last-watched")
-    public ViewHistory updateLastWatchedTime(@PathVariable Long id, @RequestBody Long lastWatchedTime) {
+    public ResponseEntity<ViewHistoryDto> updateLastWatchedTime(@PathVariable Long id, @RequestBody Long lastWatchedTime) {
         ViewHistory viewHistory = viewHistoryService.findViewHistoryById(id);
-        return viewHistoryService.updateLastWatchedTime(viewHistory, lastWatchedTime);
+        ViewHistoryDto updatedHistory = viewHistoryService.updateLastWatchedTime(viewHistory, lastWatchedTime);
+        return ResponseEntity.ok(updatedHistory);
     }
 }

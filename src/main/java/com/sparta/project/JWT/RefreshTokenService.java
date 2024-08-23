@@ -16,7 +16,8 @@ public class RefreshTokenService {
     private final UserRepository userRepository;
 
     public RefreshToken createRefreshToken(String username) {
-        User user = userRepository.findByEmail(username).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         String token = jwtTokenProvider.createRefreshToken(username);
         RefreshToken refreshToken = new RefreshToken(token, user, System.currentTimeMillis() + jwtTokenProvider.getRefreshTokenValidityInMilliseconds());
 
@@ -35,7 +36,8 @@ public class RefreshTokenService {
     }
 
     public void invalidateRefreshToken(String username) {
-        User user = userRepository.findByEmail(username).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         refreshTokenRepository.deleteByUser(user);
     }
 }

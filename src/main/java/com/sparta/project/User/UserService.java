@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -13,24 +14,45 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // 비밀번호 암호화를 위해 추가
+    private PasswordEncoder passwordEncoder;
 
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> findAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public User saveUser(User user) {
-        // 비밀번호 암호화
+    public UserDto saveUser(UserDto userDto) {
+        User user = convertToEntity(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return convertToDto(savedUser);
     }
 
-    // 회원가입 메서드 추가
-    public User registerUser(User user) {
-        // 이메일 중복 체크
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+    public UserDto registerUser(UserDto userDto) {
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
-        return saveUser(user);
+        return saveUser(userDto);
+    }
+
+    private UserDto convertToDto(User user) {
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setProfilePicture(user.getProfilePicture());
+        dto.setRole(user.getRole().name());
+        return dto;
+    }
+
+    private User convertToEntity(UserDto dto) {
+        User user = new User();
+        user.setId(dto.getId());
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setProfilePicture(dto.getProfilePicture());
+        user.setRole(User.Role.valueOf(dto.getRole()));
+        return user;
     }
 }

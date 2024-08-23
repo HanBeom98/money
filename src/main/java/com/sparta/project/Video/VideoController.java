@@ -1,6 +1,7 @@
 package com.sparta.project.Video;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,23 +13,31 @@ public class VideoController {
     @Autowired
     private VideoService videoService;
 
+    // 모든 비디오를 조회하여 반환
     @GetMapping
-    public List<Video> getAllVideos() {
-        return videoService.findAllVideos();
+    public ResponseEntity<List<VideoDto>> getAllVideos() {
+        List<VideoDto> videos = videoService.findAllVideos();
+        return ResponseEntity.ok(videos);
     }
 
+    // 비디오를 생성하는 엔드포인트
     @PostMapping
-    public Video createVideo(@RequestBody Video video) {
-        return videoService.saveVideo(video);
+    public ResponseEntity<VideoDto> createVideo(@RequestBody VideoDto videoDto) {
+        VideoDto createdVideo = videoService.saveVideo(videoDto);
+        return ResponseEntity.ok(createdVideo);
     }
 
-    @PostMapping("/upload")
-    public Video uploadVideo(@RequestBody VideoRequest videoRequest) {
-        return videoService.saveVideoWithUrl(videoRequest.getTitle(), videoRequest.getDescription());
-    }
-
+    // 비디오를 ID로 조회하여 반환
     @GetMapping("/{id}")
-    public Video getVideoById(@PathVariable Long id) {
-        return videoService.findVideoById(id);
+    public ResponseEntity<VideoDto> getVideoById(@PathVariable Long id) {
+        VideoDto videoDto = videoService.findVideoById(id);
+        return ResponseEntity.ok(videoDto);
+    }
+
+    // 비디오 조회수 증가 엔드포인트
+    @PatchMapping("/{id}/view")
+    public ResponseEntity<Void> incrementVideoViewCount(@PathVariable Long id) {
+        videoService.incrementViewCount(id);
+        return ResponseEntity.noContent().build();
     }
 }

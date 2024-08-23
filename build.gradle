@@ -22,6 +22,10 @@ ext {
 }
 
 dependencies {
+    // Jakarta Validation API
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    implementation 'org.hibernate.validator:hibernate-validator:7.0.1.Final'
+
     // Spring Boot 기본 종속성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'

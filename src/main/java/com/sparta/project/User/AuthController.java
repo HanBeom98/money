@@ -1,6 +1,7 @@
 package com.sparta.project.User;
 
 import com.sparta.project.JWT.JwtTokenProvider;
+import com.sparta.project.JWT.RefreshToken;
 import com.sparta.project.JWT.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,11 +35,17 @@ public class AuthController {
         // 인증 성공 시 SecurityContextHolder에 설정
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // JWT 토큰 발급
+        // JWT 액세스 토큰 발급
         String jwt = jwtTokenProvider.createAccessToken(authentication.getName());
 
-        // 응답으로 JWT 토큰 반환
-        return Map.of("accessToken", jwt);
+        // Refresh Token 생성 및 저장
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(authentication.getName());
+
+        // 응답으로 JWT 액세스 토큰과 Refresh 토큰 반환
+        return Map.of(
+                "accessToken", jwt,
+                "refreshToken", refreshToken.getToken()
+        );
     }
 
     @PostMapping("/logout")

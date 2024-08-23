@@ -22,7 +22,9 @@ public class Video {
     private String title;
     private String description;
     private String url;
-    private Long views;
+
+    // views 필드를 기본값 0으로 설정하여 null이 되지 않도록 합니다.
+    private Long views = 0L;
 
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
     private List<ViewHistory> viewHistories;
@@ -34,6 +36,6 @@ public class Video {
         this.title = title;
         this.description = description;
         this.url = url;
-        this.views = 0L;
+        this.views = 0L; // 생성자에서도 기본값 설정
     }
 }
