@@ -59,6 +59,13 @@ public class VideoService {
         videoRepository.save(video);
     }
 
+    // 비디오 삭제 메서드 추가
+    public void deleteVideo(Long id) {
+        Video video = videoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Video not found"));
+        videoRepository.delete(video);
+    }
+
     // 엔티티를 DTO로 변환
     private VideoDto convertToDto(Video video) {
         VideoDto dto = new VideoDto();

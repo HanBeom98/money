@@ -1,5 +1,6 @@
 package com.sparta.project.Video;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,21 @@ public class VideoController {
     @PatchMapping("/{id}/view")
     public ResponseEntity<Void> incrementVideoViewCount(@PathVariable Long id) {
         videoService.incrementViewCount(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 비디오 업데이트 엔드포인트 추가
+    @PutMapping("/{id}")
+    public ResponseEntity<VideoDto> updateVideo(@PathVariable Long id, @Valid @RequestBody VideoDto videoDto) {
+        videoDto.setId(id);
+        VideoDto updatedVideo = videoService.saveVideo(videoDto);
+        return ResponseEntity.ok(updatedVideo);
+    }
+
+    // 비디오 삭제 엔드포인트 추가
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteVideo(@PathVariable Long id) {
+        videoService.deleteVideo(id);
         return ResponseEntity.noContent().build();
     }
 }

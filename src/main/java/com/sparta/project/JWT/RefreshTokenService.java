@@ -4,6 +4,7 @@ import com.sparta.project.User.User;
 import com.sparta.project.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -35,6 +36,7 @@ public class RefreshTokenService {
         return false;
     }
 
+    @Transactional // 트랜잭션 애노테이션 추가
     public void invalidateRefreshToken(String username) {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
