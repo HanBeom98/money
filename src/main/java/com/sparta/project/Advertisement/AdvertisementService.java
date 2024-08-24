@@ -76,4 +76,8 @@ public class AdvertisementService {
 
         return advertisement;
     }
+
+    public void deleteAdvertisement(Long id) {
+        advertisementRepository.deleteById(id);
+    }
 }

@@ -24,7 +24,6 @@ public class UserService {
 
     public UserDto saveUser(UserDto userDto) {
         User user = convertToEntity(userDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         return convertToDto(savedUser);
     }
@@ -33,6 +32,14 @@ public class UserService {
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
+
+        if (userDto.getUserType().equals(UserType.LOCAL.name())) {
+            if (userDto.getPassword() == null || userDto.getPassword().isEmpty()) {
+                throw new IllegalArgumentException("비밀번호는 필수입니다.");
+            }
+            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+
         return saveUser(userDto);
     }
 
@@ -43,6 +50,7 @@ public class UserService {
         dto.setEmail(user.getEmail());
         dto.setProfilePicture(user.getProfilePicture());
         dto.setRole(user.getRole().name());
+        dto.setUserType(user.getUserType().name());
         return dto;
     }
 
@@ -53,6 +61,10 @@ public class UserService {
         user.setEmail(dto.getEmail());
         user.setProfilePicture(dto.getProfilePicture());
         user.setRole(User.Role.valueOf(dto.getRole()));
+        user.setUserType(UserType.valueOf(dto.getUserType()));
+        if (dto.getPassword() != null) {
+            user.setPassword(dto.getPassword());
+        }
         return user;
     }
 }

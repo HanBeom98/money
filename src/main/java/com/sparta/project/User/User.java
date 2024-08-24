@@ -30,7 +30,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    private UserType userType; // 추가된 필드
+
     public enum Role {
         USER, SELLER
     }
 }
+

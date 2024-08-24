@@ -3,8 +3,10 @@ package com.sparta.project.Advertisement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -25,7 +27,11 @@ public class AdvertisementController {
     @PostMapping
     public ResponseEntity<AdvertisementDto> createAdvertisement(@Valid @RequestBody AdvertisementDto advertisementDto) {
         AdvertisementDto createdAd = advertisementService.saveAdvertisement(advertisementDto);
-        return ResponseEntity.ok(createdAd);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdAd.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(createdAd);
     }
 
     // 광고를 ID로 조회하여 반환
@@ -48,5 +54,12 @@ public class AdvertisementController {
         advertisementDto.setId(id);
         AdvertisementDto updatedAd = advertisementService.saveAdvertisement(advertisementDto);
         return ResponseEntity.ok(updatedAd);
+    }
+
+    // 광고를 삭제하는 엔드포인트 추가
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAdvertisement(@PathVariable Long id) {
+        advertisementService.deleteAdvertisement(id);
+        return ResponseEntity.noContent().build();
     }
 }
