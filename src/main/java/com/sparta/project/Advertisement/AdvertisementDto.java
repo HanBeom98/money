@@ -6,6 +6,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * AdvertisementDto는 광고 정보를 전달하기 위한 데이터 전송 객체입니다.
+ * 주로 컨트롤러와 서비스 간의 데이터 전달에 사용됩니다.
+ */
 @Getter
 @Setter
 public class AdvertisementDto {

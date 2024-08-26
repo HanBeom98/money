@@ -2,20 +2,26 @@ package com.sparta.project.Advertisement;
 
 import com.sparta.project.Video.Video;
 import com.sparta.project.Video.VideoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * AdvertisementService는 광고와 관련된 비즈니스 로직을 처리합니다.
+ * 광고 생성, 조회, 삭제 및 조회수 증가 등의 기능을 제공합니다.
+ */
 @Service
 public class AdvertisementService {
 
-    @Autowired
-    private AdvertisementRepository advertisementRepository;
+    private final AdvertisementRepository advertisementRepository;
+    private final VideoRepository videoRepository;
 
-    @Autowired
-    private VideoRepository videoRepository;  // VideoRepository 주입
+    public AdvertisementService(AdvertisementRepository advertisementRepository, VideoRepository videoRepository) {
+        this.advertisementRepository = advertisementRepository;
+        this.videoRepository = videoRepository;
+    }
 
     // 모든 광고를 조회하여 DTO 리스트로 반환
     public List<AdvertisementDto> findAllAdvertisements() {
@@ -25,6 +31,7 @@ public class AdvertisementService {
     }
 
     // 광고를 저장하는 메서드, DTO를 엔티티로 변환 후 저장
+    @Transactional
     public AdvertisementDto saveAdvertisement(AdvertisementDto advertisementDto) {
         Advertisement advertisement = convertToEntity(advertisementDto);
         Advertisement savedAd = advertisementRepository.save(advertisement);
@@ -39,14 +46,10 @@ public class AdvertisementService {
     }
 
     // 광고 조회수를 증가시키는 메서드
+    @Transactional
     public void incrementAdViewCount(Long adId) {
         Advertisement advertisement = advertisementRepository.findById(adId)
                 .orElseThrow(() -> new IllegalArgumentException("Advertisement not found"));
-
-        // viewCount가 null일 경우 0으로 초기화
-        if (advertisement.getViewCount() == null) {
-            advertisement.setViewCount(0L);
-        }
 
         advertisement.incrementViewCount();
         advertisementRepository.save(advertisement);
@@ -57,7 +60,7 @@ public class AdvertisementService {
         AdvertisementDto dto = new AdvertisementDto();
         dto.setId(advertisement.getId());
         dto.setAdContent(advertisement.getAdContent());
-        dto.setViewCount(advertisement.getViewCount() != null ? advertisement.getViewCount() : 0L); // Null 체크
+        dto.setViewCount(advertisement.getViewCount());
         dto.setVideoId(advertisement.getVideo().getId());
         return dto;
     }
@@ -67,9 +70,8 @@ public class AdvertisementService {
         Advertisement advertisement = new Advertisement();
         advertisement.setId(dto.getId());
         advertisement.setAdContent(dto.getAdContent());
-        advertisement.setViewCount(dto.getViewCount() != null ? dto.getViewCount() : 0L); // Null 체크 및 기본값 설정
+        advertisement.setViewCount(dto.getViewCount() != null ? dto.getViewCount() : 0L);
 
-        // Video 객체 설정, videoId가 없으면 예외 발생
         Video video = videoRepository.findById(dto.getVideoId())
                 .orElseThrow(() -> new IllegalArgumentException("Video not found"));
         advertisement.setVideo(video);
@@ -77,6 +79,7 @@ public class AdvertisementService {
         return advertisement;
     }
 
+    // 광고를 ID로 삭제하는 메서드
     public void deleteAdvertisement(Long id) {
         advertisementRepository.deleteById(id);
     }
