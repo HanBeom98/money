@@ -16,6 +16,7 @@ public class RefreshTokenService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
 
+    @Transactional // 트랜잭션 애노테이션 추가
     public RefreshToken createRefreshToken(String username) {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
@@ -36,7 +37,7 @@ public class RefreshTokenService {
         return false;
     }
 
-    @Transactional // 트랜잭션 애노테이션 추가
+    @Transactional
     public void invalidateRefreshToken(String username) {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
