@@ -1,6 +1,7 @@
 package com.sparta.project.Video;
 
 import com.sparta.project.Advertisement.Advertisement;
+import com.sparta.project.User.User;
 import com.sparta.project.ViewHistory.ViewHistory;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,8 +24,11 @@ public class Video {
     private String description;
     private String url;
 
-    // views 필드를 기본값 0으로 설정하여 null이 되지 않도록 합니다.
     private Long views = 0L;
+
+    @ManyToOne
+    @JoinColumn(name = "uploader_id")
+    private User uploader;  // 동영상 업로더 필드 추가
 
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
     private List<ViewHistory> viewHistories;
@@ -32,10 +36,11 @@ public class Video {
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
     private List<Advertisement> advertisements;
 
-    public Video(String title, String description, String url) {
+    public Video(String title, String description, String url, User uploader) {
         this.title = title;
         this.description = description;
         this.url = url;
-        this.views = 0L; // 생성자에서도 기본값 설정
+        this.uploader = uploader;
+        this.views = 0L;
     }
 }

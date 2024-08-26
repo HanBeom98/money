@@ -32,6 +32,8 @@ public class ViewHistory {
 
     private Long lastWatchedTime;
 
+    private String ipAddress;  // IP 주소를 저장하는 필드 추가
+
     public ViewHistory(Video video, User user, LocalDateTime viewDate, Long watchTime) {
         this.video = video;
         this.user = user;

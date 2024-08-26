@@ -1,8 +1,7 @@
-package com.sparta.project.ViewHistory;// ViewHistoryController.java
+package com.sparta.project.ViewHistory;
 
-import com.sparta.project.ViewHistory.ViewHistory;
-import com.sparta.project.ViewHistory.ViewHistoryDto;
-import com.sparta.project.ViewHistory.ViewHistoryService;
+import com.sparta.project.User.User;
+import com.sparta.project.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +15,20 @@ public class ViewHistoryController {
     @Autowired
     private ViewHistoryService viewHistoryService;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping
     public ResponseEntity<List<ViewHistoryDto>> getAllViewHistories() {
         List<ViewHistoryDto> viewHistories = viewHistoryService.findAllViewHistories();
         return ResponseEntity.ok(viewHistories);
     }
 
-    @PostMapping
-    public ResponseEntity<ViewHistoryDto> createViewHistory(@RequestBody ViewHistoryDto viewHistoryDto) {
-        ViewHistoryDto createdHistory = viewHistoryService.saveViewHistory(viewHistoryDto);
-        return ResponseEntity.ok(createdHistory);
+    @PostMapping("/{videoId}/track")
+    public ResponseEntity<Void> trackVideoView(@PathVariable Long videoId, @RequestParam Long watchTime) {
+        User currentUser = userService.getCurrentUser(); // 현재 로그인한 사용자 가져오기
+        viewHistoryService.trackVideoView(videoId, currentUser, watchTime);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")

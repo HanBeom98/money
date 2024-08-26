@@ -1,5 +1,6 @@
 package com.sparta.project.Video;
 
+import com.sparta.project.User.User;
 import com.sparta.project.s3.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,12 +34,13 @@ public class VideoService {
 
     // 비디오를 S3 URL과 함께 저장하는 메서드
     @Transactional
-    public VideoDto saveVideoWithUrl(String title, String description) {
+    public VideoDto saveVideoWithUrl(String title, String description, User uploader) {
         String bucketName = "chohanbeom-bucket";
         String keyName = "SACap 2024-06-27 17-20-21-042.mp4";
         String url = s3Service.getExistingFileUrl(bucketName, keyName);
 
-        Video video = new Video(title, description, url);
+        // User 객체를 추가하여 생성자에 전달
+        Video video = new Video(title, description, url, uploader);
         Video savedVideo = videoRepository.save(video);
 
         return convertToDto(savedVideo);
