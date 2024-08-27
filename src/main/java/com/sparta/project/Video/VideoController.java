@@ -3,11 +3,13 @@ package com.sparta.project.Video;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/videos")
 public class VideoController {
 
@@ -55,5 +57,13 @@ public class VideoController {
     public ResponseEntity<Void> deleteVideo(@PathVariable Long id) {
         videoService.deleteVideo(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 특정 동영상을 재생하기 위한 엔드포인트 추가
+    @GetMapping("/play/{id}")
+    public String playVideo(@PathVariable Long id, Model model) {
+        VideoDto videoDto = videoService.findVideoById(id);
+        model.addAttribute("videoUrl", videoDto.getUrl());
+        return "playVideo"; // src/main/resources/templates/playVideo.html 템플릿으로 이동
     }
 }

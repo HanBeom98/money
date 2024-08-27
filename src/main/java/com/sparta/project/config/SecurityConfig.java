@@ -56,7 +56,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/api/users", true) // OAuth2 로그인 성공 시 리디렉션될 URL 설정
+                        .defaultSuccessUrl("/", true) // OAuth2 로그인 성공 시 메인 페이지로 리디렉션 설정
                         .failureUrl("/login?error=true") // 로그인 실패 시 리디렉션될 URL 설정
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService) // OAuth2 사용자 정보 서비스 설정
