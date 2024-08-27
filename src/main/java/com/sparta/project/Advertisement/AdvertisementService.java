@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * AdvertisementService는 광고와 관련된 비즈니스 로직을 처리합니다.
- * 광고 생성, 조회, 삭제 및 조회수 증가 등의 기능을 제공합니다.
+ * AdvertisementService는 광고와 관련된 비즈니스 로직을 처리
+ * 광고 생성, 조회, 삭제 및 조회수 증가 등의 기능을 제공
  */
 @Service
 public class AdvertisementService {

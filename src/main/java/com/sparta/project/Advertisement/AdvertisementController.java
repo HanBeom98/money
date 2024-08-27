@@ -9,8 +9,8 @@ import java.net.URI;
 import java.util.List;
 
 /**
- * AdvertisementController는 광고와 관련된 API 요청을 처리합니다.
- * 광고 생성, 조회, 업데이트, 삭제 및 조회수 증가 등의 엔드포인트를 제공합니다.
+ * AdvertisementController는 광고와 관련된 API 요청을 처리
+ * 광고 생성, 조회, 업데이트, 삭제 및 조회수 증가 등의 엔드포인트를 제공
  */
 @RestController
 @RequestMapping("/api/advertisements")

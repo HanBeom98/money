@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -42,5 +43,6 @@ public class Video {
         this.url = url;
         this.uploader = uploader;
         this.views = 0L;
+        this.advertisements = new ArrayList<>(); // 광고 리스트 초기화
     }
 }
