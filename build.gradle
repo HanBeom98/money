@@ -49,6 +49,16 @@ dependencies {
     // AWS SDK for Java (S3)
     implementation 'software.amazon.awssdk:s3:2.20.0' // AWS S3 연동을 위한 SDK 추가
 
+    // Spring Batch 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+
+    // JPA와 함께 사용할 경우 H2 데이터베이스를 사용한 테스트를 위해 추가할 수 있음
+    runtimeOnly 'com.h2database:h2'
+
+    // Spring Context와 Scheduling 관련 의존성 추가
+    implementation 'org.springframework:spring-context'
+    implementation 'org.springframework:spring-context-support'
+
     // 개발 전용 종속성
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
