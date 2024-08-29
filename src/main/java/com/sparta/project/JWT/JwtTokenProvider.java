@@ -1,5 +1,6 @@
 package com.sparta.project.JWT;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,9 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private final String secretKey = "your-secret-key"; // 실제로는 환경변수나 설정파일에서 불러오는 것이 좋습니다.
+    @Value("${jwt.secret}")  // 설정파일에서 비밀 키를 불러옴
+    private String secretKey;  // 설정파일에서 가져옴
+
     private final CustomUserDetailsService userDetailsService;
     private final long accessTokenValidityInMilliseconds = 3600000; // 1 hour
     private final long refreshTokenValidityInMilliseconds = 86400000; // 1 day (24 hours)
