@@ -6,12 +6,13 @@ import com.sparta.project.Video.Video;
 import com.sparta.project.Video.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class ViewHistoryService {
@@ -25,67 +26,64 @@ public class ViewHistoryService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private HttpServletRequest request; // 현재 요청을 받아오기 위해 주입
-
-    public List<ViewHistoryDto> findAllViewHistories() {
-        List<ViewHistory> histories = viewHistoryRepository.findAll();
-        return histories.stream()
-                .map(this::entityToDto)
-                .collect(Collectors.toList());
+    // 모든 시청 기록을 조회하는 메서드, Flux를 반환하여 여러 시청 기록을 리액티브하게 처리
+    public Flux<ViewHistoryDto> findAllViewHistories() {
+        return Flux.fromIterable(viewHistoryRepository.findAll())
+                .map(this::entityToDto);
     }
 
-    public ViewHistoryDto saveViewHistory(ViewHistoryDto viewHistoryDto) {
-        ViewHistory viewHistory = dtoToEntity(viewHistoryDto);
-        ViewHistory savedHistory = viewHistoryRepository.save(viewHistory);
-        return entityToDto(savedHistory);
+    public Mono<ViewHistoryDto> saveViewHistory(ViewHistoryDto viewHistoryDto) {
+        return Mono.fromSupplier(() -> {
+            ViewHistory viewHistory = dtoToEntity(viewHistoryDto);
+            ViewHistory savedHistory = viewHistoryRepository.save(viewHistory);
+            return entityToDto(savedHistory);
+        });
     }
 
-    public ViewHistory findViewHistoryById(Long id) {
-        return viewHistoryRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("ViewHistory not found"));
+    public Mono<ViewHistory> findViewHistoryById(Long id) {
+        return Mono.fromSupplier(() -> viewHistoryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("ViewHistory not found")));
     }
 
-    public ViewHistoryDto updateLastWatchedTime(ViewHistory viewHistory, Long lastWatchedTime) {
-        viewHistory.setLastWatchedTime(lastWatchedTime);
-        ViewHistory updatedViewHistory = viewHistoryRepository.save(viewHistory);
-        return entityToDto(updatedViewHistory);
+    public Mono<ViewHistoryDto> updateLastWatchedTime(ViewHistory viewHistory, Long lastWatchedTime) {
+        return Mono.fromSupplier(() -> {
+            viewHistory.setLastWatchedTime(lastWatchedTime);
+            ViewHistory updatedViewHistory = viewHistoryRepository.save(viewHistory);
+            return entityToDto(updatedViewHistory);
+        });
     }
 
-    public void trackVideoView(Long videoId, User currentUser, Long watchTime) {
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new IllegalArgumentException("Video not found"));
+    public Mono<Void> trackVideoView(Long videoId, User currentUser, Long watchTime, ServerWebExchange exchange) {
+        return Mono.defer(() -> {
+            Video video = videoRepository.findById(videoId)
+                    .orElseThrow(() -> new IllegalArgumentException("Video not found"));
 
-        System.out.println("Video found: " + video.getTitle());
+            // 동영상 게시자가 시청하는 경우 카운트 제외
+            if (currentUser.equals(video.getUploader())) {
+                System.out.println("Uploader is watching their own video. Count not incremented.");
+                return Mono.empty();
+            }
 
-        // 동영상 게시자가 시청하는 경우 카운트 제외
-        if (currentUser.equals(video.getUploader())) {
-            System.out.println("Uploader is watching their own video. Count not incremented.");
-            return;
-        }
+            String currentIp = exchange.getRequest().getRemoteAddress().getAddress().getHostAddress();
+            LocalDateTime currentTime = LocalDateTime.now();
 
-        String currentIp = request.getRemoteAddr(); // 요청한 사용자의 IP 주소 가져오기
-        LocalDateTime currentTime = LocalDateTime.now();
+            ViewHistory lastView = viewHistoryRepository.findFirstByUserAndVideoOrderByViewDateDesc(currentUser, video);
 
-        ViewHistory lastView = viewHistoryRepository.findFirstByUserAndVideoOrderByViewDateDesc(currentUser, video);
+            if (lastView != null && lastView.getViewDate().plusSeconds(30).isAfter(currentTime) && lastView.getIpAddress().equals(currentIp)) {
+                System.out.println("Abusive behavior detected. Count not incremented.");
+                return Mono.empty();
+            }
 
-        System.out.println("Last view history: " + (lastView != null ? lastView.getViewDate() : "None"));
+            // 새로운 시청 기록 저장
+            ViewHistory viewHistory = new ViewHistory(video, currentUser, currentTime, watchTime);
+            viewHistory.setIpAddress(currentIp);
+            viewHistoryRepository.save(viewHistory);
 
-        if (lastView != null && lastView.getViewDate().plusSeconds(30).isAfter(currentTime) && lastView.getIpAddress().equals(currentIp)) {
-            System.out.println("Abusive behavior detected. Count not incremented.");
-            return;
-        }
-
-        System.out.println("Recording new view history.");
-
-        // 새로운 시청 기록 저장
-        ViewHistory viewHistory = new ViewHistory(video, currentUser, currentTime, watchTime);
-        viewHistory.setIpAddress(currentIp); // IP 주소 저장
-        viewHistoryRepository.save(viewHistory);
-
-        // 동영상의 조회수 증가
-        video.setViews(video.getViews() + 1);
-        videoRepository.save(video);
-        System.out.println("View count incremented.");
+            // 동영상의 조회수 증가
+            video.setViews(video.getViews() + 1);
+            videoRepository.save(video);
+            return Mono.empty();
+        });
     }
 
     // 엔터티 -> DTO 변환 메서드

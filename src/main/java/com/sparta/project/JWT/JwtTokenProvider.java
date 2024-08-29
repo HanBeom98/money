@@ -1,11 +1,15 @@
 package com.sparta.project.JWT;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import com.sparta.project.Service.CustomUserDetailsService;
+import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.Date;
 
@@ -13,9 +17,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}")
-    private String secretKey;
-
+    private final String secretKey = "your-secret-key"; // 실제로는 환경변수나 설정파일에서 불러오는 것이 좋습니다.
+    private final CustomUserDetailsService userDetailsService;
     private final long accessTokenValidityInMilliseconds = 3600000; // 1 hour
     private final long refreshTokenValidityInMilliseconds = 86400000; // 1 day (24 hours)
 
@@ -55,5 +58,10 @@ public class JwtTokenProvider {
 
     public long getRefreshTokenValidityInMilliseconds() {
         return refreshTokenValidityInMilliseconds;
+    }
+
+    public Mono<Authentication> getAuthentication(String authToken) {
+        return userDetailsService.findByUsername(getUsername(authToken))
+                .map(userDetails -> new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities()));
     }
 }

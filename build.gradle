@@ -22,18 +22,16 @@ ext {
 }
 
 dependencies {
-    // Jakarta Validation API
-    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
-    implementation 'org.hibernate.validator:hibernate-validator:7.0.1.Final'
+    // Spring WebFlux 사용
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // Spring Cloud Gateway
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
 
     // Spring Boot 기본 종속성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-web' // Spring MVC
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-
-    // Thymeleaf 템플릿 엔진 추가
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
     // JWT 종속성
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
@@ -50,12 +48,12 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // AWS SDK for Java (S3)
-    implementation 'software.amazon.awssdk:s3:2.20.0' // AWS S3 연동을 위한 SDK 추가
+    implementation 'software.amazon.awssdk:s3:2.20.0'
 
     // Spring Batch 의존성 추가
     implementation 'org.springframework.boot:spring-boot-starter-batch'
 
-    // JPA와 함께 사용할 경우 H2 데이터베이스를 사용한 테스트를 위해 추가할 수 있음
+    // H2 Database
     runtimeOnly 'com.h2database:h2'
 
     // Spring Context와 Scheduling 관련 의존성 추가
@@ -74,8 +72,8 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // JUnit
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
 
     // Swagger 대체로 springdoc-openapi
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'

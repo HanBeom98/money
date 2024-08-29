@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,15 +19,12 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // 현재 로그인한 사용자 정보를 가져오는 메서드
-    public User getCurrentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            String email = ((UserDetails) principal).getUsername();
-            return userRepository.findByEmail(email)
-                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        }
-        throw new IllegalArgumentException("로그인된 사용자가 없습니다.");
+    // 현재 로그인한 사용자 정보를 리액티브하게 가져오는 메서드
+    public Mono<User> getCurrentUser() {
+        return Mono.justOrEmpty(SecurityContextHolder.getContext().getAuthentication())
+                .filter(authentication -> authentication.getPrincipal() instanceof UserDetails)
+                .map(authentication -> (UserDetails) authentication.getPrincipal())
+                .flatMap(userDetails -> Mono.justOrEmpty(userRepository.findByEmail(userDetails.getUsername())));
     }
 
     public List<UserDto> findAllUsers() {

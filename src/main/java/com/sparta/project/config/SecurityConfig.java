@@ -6,64 +6,82 @@ import com.sparta.project.Service.CustomUserDetailsService;
 import com.sparta.project.Service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+import reactor.core.publisher.Mono;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebFluxSecurity
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService userDetailsService;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final ReactiveClientRegistrationRepository clientRegistrationRepository;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, CustomUserDetailsService userDetailsService, CustomOAuth2UserService customOAuth2UserService) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, CustomUserDetailsService userDetailsService, CustomOAuth2UserService customOAuth2UserService, ReactiveClientRegistrationRepository clientRegistrationRepository) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailsService = userDetailsService;
         this.customOAuth2UserService = customOAuth2UserService;
+        this.clientRegistrationRepository = clientRegistrationRepository;
     }
 
-    // 비밀번호 인코더 설정
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // AuthenticationManager 빈 정의
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        return http
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .authorizeExchange(auth -> auth
+                        .pathMatchers("/api/auth/**").permitAll()
+                        .pathMatchers("/api/videos/**").permitAll()
+                        .anyExchange().authenticated()
+                )
+                .addFilterAt(jwtAuthenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
+                .oauth2Login(oauth2 -> oauth2
+                        .clientRegistrationRepository(clientRegistrationRepository)
+                        .authenticationSuccessHandler((webFilterExchange, authentication) -> webFilterExchange.getExchange().getResponse().setComplete())
+                        .authenticationFailureHandler((webFilterExchange, exception) -> webFilterExchange.getExchange().getResponse().setComplete())
+                )
+                .build();
     }
 
-    // SecurityFilterChain을 정의하여 HTTP 보안 설정
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .httpBasic(AbstractHttpConfigurer::disable) // HTTP 기본 인증 비활성화
-                .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용하지 않도록 설정 (JWT 사용 시 필수)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // 인증 관련 엔드포인트는 허용
-                        .requestMatchers("/api/videos/**").permitAll() // 비디오 관련 엔드포인트도 허용
-                        .anyRequest().authenticated() // 나머지 요청은 인증 필요
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/", true) // OAuth2 로그인 성공 시 메인 페이지로 리디렉션 설정
-                        .failureUrl("/login?error=true") // 로그인 실패 시 리디렉션될 URL 설정
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService) // OAuth2 사용자 정보 서비스 설정
-                        )
-                )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class); // JWT 필터를 UsernamePasswordAuthenticationFilter 앞에 추가
+    public AuthenticationWebFilter jwtAuthenticationWebFilter() {
+        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(jwtReactiveAuthenticationManager());
+        authenticationWebFilter.setServerAuthenticationConverter(exchange -> {
+            String token = exchange.getRequest().getHeaders().getFirst("Authorization");
+            if (token != null && token.startsWith("Bearer ")) {
+                String authToken = token.substring(7);
+                return Mono.just(jwtTokenProvider.getUsername(authToken))
+                        .flatMap(username -> jwtTokenProvider.validateToken(authToken) ?
+                                Mono.justOrEmpty(username) : Mono.empty())
+                        .flatMap(username -> jwtTokenProvider.getAuthentication(authToken));
+            }
+            return Mono.empty();
+        });
+        authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/api/**"));
+        return authenticationWebFilter;
+    }
 
-        return http.build();
+    @Bean
+    public ReactiveAuthenticationManager jwtReactiveAuthenticationManager() {
+        UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
+        authenticationManager.setPasswordEncoder(passwordEncoder());
+        return authenticationManager;
     }
 }

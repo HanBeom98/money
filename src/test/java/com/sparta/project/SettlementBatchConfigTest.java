@@ -3,13 +3,16 @@ package com.sparta.project;
 import com.sparta.project.Settlement.SettlementBatchConfig;
 import com.sparta.project.Video.Video;
 import com.sparta.project.Advertisement.Advertisement;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 public class SettlementBatchConfigTest {
 
     @Test
+    @DisplayName("비디오 정산계산")
     public void testCalculateVideoSettlement() {
         SettlementBatchConfig settlementBatchConfig = new SettlementBatchConfig(null, null);
 

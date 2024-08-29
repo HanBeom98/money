@@ -16,7 +16,7 @@ public class RefreshTokenService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
 
-    @Transactional // 트랜잭션 애노테이션 추가
+    @Transactional
     public RefreshToken createRefreshToken(String username) {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
@@ -31,7 +31,6 @@ public class RefreshTokenService {
         Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByToken(token);
         if (refreshTokenOpt.isPresent()) {
             RefreshToken refreshToken = refreshTokenOpt.get();
-            // 만료 시간을 추가로 확인
             return refreshToken.getExpiryDate() > System.currentTimeMillis() && jwtTokenProvider.validateToken(token);
         }
         return false;

@@ -11,9 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
+import org.springframework.mock.web.server.MockServerWebExchange;
+import org.springframework.web.server.ServerWebExchange;
 
-import jakarta.servlet.http.HttpServletRequest;
-
+import javax.servlet.http.HttpServletRequest;
+import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -36,6 +40,7 @@ class ViewHistoryServiceTest {
 
     private User testUser;
     private Video testVideo;
+    private ServerWebExchange exchange;
 
     @BeforeEach
     void setUp() {
@@ -46,6 +51,8 @@ class ViewHistoryServiceTest {
 
         testVideo = new Video();
         testVideo.setTitle("Test Video");
+
+        exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").build());
     }
 
     @Test
@@ -69,7 +76,7 @@ class ViewHistoryServiceTest {
                 .thenReturn(recentViewHistory);
 
         // When
-        viewHistoryService.trackVideoView(1L, testUser, 60L);
+        viewHistoryService.trackVideoView(1L, testUser, 60L, exchange);
 
         // Then
         verify(videoRepository, times(1)).save(any(Video.class));
