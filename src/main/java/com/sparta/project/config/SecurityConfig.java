@@ -1,6 +1,5 @@
 package com.sparta.project.config;
 
-import com.sparta.project.JWT.JwtAuthenticationFilter;
 import com.sparta.project.JWT.JwtTokenProvider;
 import com.sparta.project.Service.CustomUserDetailsService;
 import com.sparta.project.Service.CustomOAuth2UserService;
