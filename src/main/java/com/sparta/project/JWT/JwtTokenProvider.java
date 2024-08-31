@@ -3,7 +3,7 @@ package com.sparta.project.JWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import com.sparta.project.Service.CustomUserDetailsService;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
