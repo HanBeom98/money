@@ -1,8 +1,7 @@
 package com.sparta.project.ViewHistory;
 
 import com.sparta.project.User.UserService;
-import com.sparta.project.ViewHistory.ViewHistoryDto;
-import com.sparta.project.ViewHistory.ViewHistoryService;
+import com.sparta.project.Util.EntityDtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +30,7 @@ public class ViewHistoryController {
     @PostMapping("/{videoId}/track")
     public Mono<ResponseEntity<Void>> trackVideoView(@PathVariable Long videoId,
                                                      @RequestParam Long watchTime,
-                                                     ServerWebExchange exchange) { // ServerWebExchange를 추가
+                                                     ServerWebExchange exchange) {
         return userService.getCurrentUser()
                 .flatMap(currentUser -> viewHistoryService.trackVideoView(videoId, currentUser, watchTime, exchange))
                 .then(Mono.just(ResponseEntity.noContent().build()));
@@ -40,14 +39,7 @@ public class ViewHistoryController {
     @GetMapping("/{id}")
     public Mono<ResponseEntity<ViewHistoryDto>> getViewHistoryById(@PathVariable Long id) {
         return viewHistoryService.findViewHistoryById(id)
-                .map(viewHistoryService::entityToDto)
-                .map(ResponseEntity::ok);
-    }
-
-    @PutMapping("/{id}/last-watched")
-    public Mono<ResponseEntity<ViewHistoryDto>> updateLastWatchedTime(@PathVariable Long id, @RequestBody Long lastWatchedTime) {
-        return viewHistoryService.findViewHistoryById(id)
-                .flatMap(viewHistory -> viewHistoryService.updateLastWatchedTime(viewHistory, lastWatchedTime))
+                .map(EntityDtoConverter::convertToDto) // EntityDtoConverter 사용
                 .map(ResponseEntity::ok);
     }
 }

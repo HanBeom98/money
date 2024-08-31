@@ -1,20 +1,22 @@
 package com.sparta.project.Video;
 
-import jakarta.validation.Valid;
+import com.sparta.project.User.User;
+import com.sparta.project.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/videos")
 public class VideoController {
 
     @Autowired
     private VideoService videoService;
+
+    @Autowired
+    private UserService userService;
 
     // 모든 비디오를 조회하여 반환
     @GetMapping
@@ -26,7 +28,9 @@ public class VideoController {
     // 비디오를 생성하는 엔드포인트
     @PostMapping
     public ResponseEntity<VideoDto> createVideo(@RequestBody VideoDto videoDto) {
-        VideoDto createdVideo = videoService.saveVideo(videoDto);
+        // 현재 로그인한 사용자를 가져옴
+        User currentUser = userService.getCurrentUser().block(); // Mono에서 User를 얻어옴
+        VideoDto createdVideo = videoService.saveVideo(videoDto, currentUser);
         return ResponseEntity.ok(createdVideo);
     }
 
@@ -40,30 +44,9 @@ public class VideoController {
     // 비디오 조회수 증가 엔드포인트
     @PatchMapping("/{id}/view")
     public ResponseEntity<Void> incrementVideoViewCount(@PathVariable Long id) {
-        videoService.incrementViewCount(id);
+        // 현재 로그인한 사용자를 가져옴
+        User currentUser = userService.getCurrentUser().block(); // Mono에서 User를 얻어옴
+        videoService.incrementViewCount(id, currentUser);
         return ResponseEntity.noContent().build();
-    }
-
-    // 비디오 업데이트 엔드포인트 추가
-    @PutMapping("/{id}")
-    public ResponseEntity<VideoDto> updateVideo(@PathVariable Long id, @Valid @RequestBody VideoDto videoDto) {
-        videoDto.setId(id);
-        VideoDto updatedVideo = videoService.saveVideo(videoDto);
-        return ResponseEntity.ok(updatedVideo);
-    }
-
-    // 비디오 삭제 엔드포인트 추가
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteVideo(@PathVariable Long id) {
-        videoService.deleteVideo(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    // 특정 동영상을 재생하기 위한 엔드포인트 추가
-    @GetMapping("/play/{id}")
-    public String playVideo(@PathVariable Long id, Model model) {
-        VideoDto videoDto = videoService.findVideoById(id);
-        model.addAttribute("videoUrl", videoDto.getUrl());
-        return "playVideo"; // src/main/resources/templates/playVideo.html 템플릿으로 이동
     }
 }
