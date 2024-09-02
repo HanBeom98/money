@@ -29,6 +29,7 @@ public class SettlementBatchConfigTest {
     }
 
     @Test
+    @DisplayName("광고 정산 금액")
     public void testCalculateAdSettlement() {
         SettlementBatchConfig settlementBatchConfig = new SettlementBatchConfig(null, null);
 
