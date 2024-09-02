@@ -54,7 +54,7 @@ public class UserService {
         return saveUser(userDto);
     }
 
-    private UserDto convertToDto(User user) {
+    public UserDto convertToDto(User user) {
         UserDto dto = new UserDto();
         dto.setId(user.getId());
         dto.setName(user.getName());
@@ -65,7 +65,7 @@ public class UserService {
         return dto;
     }
 
-    private User convertToEntity(UserDto dto) {
+    public User convertToEntity(UserDto dto) {
         User user = new User();
         user.setId(dto.getId());
         user.setName(dto.getName());

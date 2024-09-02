@@ -47,7 +47,14 @@ public class EntityDtoConverter {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setProfilePicture(dto.getProfilePicture());
-        user.setRole(User.Role.valueOf(dto.getRole()));
+
+        // Role이 null일 경우 기본값으로 Role.USER 설정
+        if (dto.getRole() != null) {
+            user.setRole(User.Role.valueOf(dto.getRole()));
+        } else {
+            user.setRole(User.Role.USER); // 기본값 설정
+        }
+
         user.setUserType(UserType.valueOf(dto.getUserType()));
         if (dto.getPassword() != null) {
             user.setPassword(dto.getPassword());
