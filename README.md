@@ -1,25 +1,30 @@
-Money Service API
-💡 프로젝트 개요
-Money Service API는 동영상 플랫폼에서 발생하는 수익 정산 및 통계 관리를 위한 마이크로서비스 기반 애플리케이션입니다. API Gateway를 통해 사용자 요청을 각 서비스로 라우팅하고, 유저 관리, 동영상 관리, 통계 처리 및 정산 작업을 수행합니다.
+# Money Service API
 
-🔑 주요 기능
-API Gateway: 모든 클라이언트 요청을 중앙에서 관리하고 각 마이크로서비스로 라우팅합니다.
-User Service: 사용자 정보 관리, JWT 기반 인증 및 OAuth2 소셜 로그인 (카카오, 구글) 처리.
-Video Service: 동영상 CRUD, 광고 수익 및 동영상 수익 정산 기능 제공.
-Statistics Service: 동영상 통계 데이터를 주기적으로 처리하고, 배치 작업을 통해 조회수 및 광고 수익 집계.
-Eureka Server: 각 마이크로서비스의 동적 검색 및 로드 밸런싱 제공.
-🛠 기술 스택
-Backend: Spring Boot, Spring Cloud Netflix Eureka, Spring Cloud Gateway, Spring Batch, Spring Security, JPA (Hibernate), MySQL, JWT
-Cloud: AWS (RDS, EC2)
-Build Tool: Gradle
-Version Control: GitHub
-API Documentation: SpringDoc OpenAPI
-CI/CD: GitHub Actions (계획 중)
-⚙️ 아키텍처
-API Gateway: 클라이언트 요청을 각 서비스로 라우팅하고, 트래픽을 분산 처리합니다.
-Eureka Server: 각 서비스는 Eureka에 등록되며, 이를 통해 동적으로 서비스 위치를 검색하고 연결됩니다.
-css
-코드 복사
+<img src="https://example-image-url.com/money-service.jpg" width="700px;" alt="Money Service API Banner"/>
+
+## 💡 프로젝트 개요
+**Money Service API**는 동영상 플랫폼에서 발생하는 **수익 정산** 및 **통계 관리**를 위한 마이크로서비스 기반 애플리케이션입니다. **API Gateway**를 통해 사용자 요청을 각 서비스로 라우팅하고, 유저 관리, 동영상 관리, 통계 처리 및 정산 작업을 수행합니다.
+
+## 🔑 주요 기능
+- **API Gateway**: 모든 클라이언트 요청을 중앙에서 관리하고 각 마이크로서비스로 라우팅합니다.
+- **User Service**: 사용자 정보 관리, JWT 기반 인증 및 OAuth2 소셜 로그인 (카카오, 구글) 처리.
+- **Video Service**: 동영상 CRUD, 광고 수익 및 동영상 수익 정산 기능 제공.
+- **Statistics Service**: 동영상 통계 데이터를 주기적으로 처리하고, 배치 작업을 통해 조회수 및 광고 수익 집계.
+- **Eureka Server**: 각 마이크로서비스의 동적 검색 및 로드 밸런싱 제공.
+
+## 🛠 기술 스택
+- **Backend**: Spring Boot, Spring Cloud Netflix Eureka, Spring Cloud Gateway, Spring Batch, Spring Security, JPA (Hibernate), MySQL, JWT
+- **Cloud**: AWS (RDS, EC2)
+- **Build Tool**: Gradle
+- **Version Control**: GitHub
+- **API Documentation**: SpringDoc OpenAPI
+- **CI/CD**: GitHub Actions (계획 중)
+
+## ⚙️ 아키텍처
+- **API Gateway**: 클라이언트 요청을 각 서비스로 라우팅하고, 트래픽을 분산 처리합니다.
+- **Eureka Server**: 각 서비스는 Eureka에 등록되며, 이를 통해 동적으로 서비스 위치를 검색하고 연결됩니다.
+
+```plaintext
 [Client] -> [API Gateway] -> [Eureka Server] -> [User Service]
                                        -> [Video Service]
                                        -> [Statistics Service]
