@@ -1,6 +1,6 @@
 # Money Service API
 
-<img src="https://example-image-url.com/money-service.jpg" width="700px;" alt="Money Service API Banner"/>
+
 
 ## 💡 프로젝트 개요
 **Money Service API**는 동영상 플랫폼에서 발생하는 **수익 정산** 및 **통계 관리**를 위한 마이크로서비스 기반 애플리케이션입니다. **API Gateway**를 통해 사용자 요청을 각 서비스로 라우팅하고, 유저 관리, 동영상 관리, 통계 처리 및 정산 작업을 수행합니다.
