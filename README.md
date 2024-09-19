@@ -62,6 +62,8 @@ cd video-service
 # Statistics Service 실행
 cd statistics
 ./gradlew bootRun
+```plaintext
+
 🔮 향후 개선 사항
 CI/CD 도입: 자동화된 배포 파이프라인 구축 예정.
 OAuth2 인증 확장: 구글, 네이버 등 추가적인 소셜 로그인 제공자 지원 예정.
