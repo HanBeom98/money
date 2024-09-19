@@ -38,13 +38,11 @@ JWT 인증 관리: JWT 토큰의 만료 및 유효성 검증 과정에서 발생
 📦 설치 및 실행
 프로젝트 클론
 
-bash
-코드 복사
+
 git clone https://github.com/your-repo/money-service.git
 각 서비스 실행
 
-bash
-코드 복사
+
 # Eureka 서버 실행
 cd eureka-server
 ./gradlew bootRun
