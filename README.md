@@ -61,8 +61,8 @@ cd video-service
 
 # Statistics Service 실행
 cd statistics
-./gradlew bootRun```
-
+./gradlew bootRun
+```
 
 ##🔮 향후 개선 사항
 CI/CD 도입: 자동화된 배포 파이프라인 구축 예정.
