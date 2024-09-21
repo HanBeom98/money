@@ -2,6 +2,5 @@ rootProject.name = 'money'
 include 'api-gateway'
 include 'user-service'
 include 'video-service'
-
 include 'statistics'
 include 'eureka-server'
