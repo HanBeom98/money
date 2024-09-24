@@ -14,7 +14,7 @@
 
 ## 🛠 기술 스택
 - **Backend**: Spring Boot, Spring Cloud Netflix Eureka, Spring Cloud Gateway, Spring Batch, Spring Security, JPA (Hibernate), MySQL, JWT
-- **Cloud**: AWS (RDS, EC2)
+- **Cloud**: AWS (RDS, EC2, S3(중단))
 - **Build Tool**: Gradle
 - **Version Control**: GitHub
 - **API Documentation**: SpringDoc OpenAPI
