@@ -25,43 +25,17 @@
 - **Eureka Server**: 각 서비스는 Eureka에 등록되며, 이를 통해 동적으로 서비스 위치를 검색하고 연결됩니다.
 
 ```plaintext
-[Client] -> [API Gateway] -> [Eureka Server] -> [User Service]
-                                       -> [Video Service]
-                                       -> [Statistics Service]
+여기 이미지 넣어야함
+
 🚀 성능 최적화
-@Transactional(readOnly = true): 데이터베이스 성능 최적화를 위해 읽기 전용 트랜잭션 적용.
-Redis 캐시 도입: 자주 조회되는 데이터에 대한 캐싱을 통해 응답 시간 단축.
-Spring Cloud LoadBalancer: 서비스 간 트래픽을 분산하여 성능 저하 없이 안정적으로 운영 가능.
-🔧 문제 해결
-JWT 인증 관리: JWT 토큰의 만료 및 유효성 검증 과정에서 발생한 문제를 개선하고, 인증 로직을 강화.
-배치 처리 성능 문제: 대량의 통계 데이터를 처리할 때 성능 저하 문제가 발생하였으나, Spring Batch 최적화 및 MySQL 인덱스를 추가하여 해결.
-📦 설치 및 실행
-프로젝트 클론
+- @Transactional(readOnly = true): 데이터베이스 성능 최적화를 위해 읽기 전용 트랜잭션 적용.
+- Redis 캐시 도입: 자주 조회되는 데이터에 대한 캐싱을 통해 응답 시간 단축.
+- Spring Cloud LoadBalancer: 서비스 간 트래픽을 분산하여 성능 저하 없이 안정적으로 운영 가능.
+- **Batch 작업 최적화**: Spring Batch를 사용하여 대용량 데이터를 처리할 때, 대량의 조회와 수정 작업에 최적화된 배치 전략을 사용했습니다.
+    - **Batch Insert/Update 사용**: 대량 데이터를 한 번에 처리하여 데이터베이스 I/O를 최소화하고 성능을 향상시켰습니다.
+    - **커넥션 풀 최적화**: 데이터베이스 커넥션 풀 크기를 조정하여 대량 데이터 처리를 효율적으로 수행했습니다.
+    - **쿼리 최적화**: 쿼리에 적절한 인덱스를 추가하여 대규모 데이터 조회 시 성능을 개선했습니다.
 
-
-git clone https://github.com/your-repo/money-service.git
-각 서비스 실행
-
-
-# Eureka 서버 실행
-cd eureka-server
-./gradlew bootRun
-
-# API Gateway 실행
-cd api-gateway
-./gradlew bootRun
-
-# User Service 실행
-cd user-service
-./gradlew bootRun
-
-# Video Service 실행
-cd video-service
-./gradlew bootRun
-
-# Statistics Service 실행
-cd statistics
-./gradlew bootRun
 ```
 
 ## 🔮 향후 개선 사항
