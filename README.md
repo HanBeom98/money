@@ -27,7 +27,8 @@
 - **API Gateway**: 클라이언트 요청을 각 서비스로 라우팅하고, 트래픽을 분산 처리합니다.
 - **Eureka Server**: 각 서비스는 Eureka에 등록되며, 이를 통해 동적으로 서비스 위치를 검색하고 연결됩니다.
 
-![아키텍처 다이어그램](링크를_여기에_넣으세요)
+![money drawio](https://github.com/user-attachments/assets/c6bc7a53-3b16-400c-8348-96c47dd5eb31)
+
 
 ## 🚀 성능 최적화
 - `@Transactional(readOnly = true)`: 데이터베이스 성능 최적화를 위해 읽기 전용 트랜잭션을 적용.
@@ -48,4 +49,4 @@
 - **OAuth2 인증 확장**: 구글, 네이버 등 추가적인 소셜 로그인 제공자 지원 예정.
 - **통계 대시보드**: 실시간 통계 데이터를 시각화하여 사용자에게 직관적인 정보를 제공할 예정.
 
-[부가 설명 및 추가 문서 링크](https://third-amber-e30.notion.site/Money-10c720a78baf800c8819d97aeddb7a27?pvs=4)
+[부가 설명](https://third-amber-e30.notion.site/Money-10c720a78baf800c8819d97aeddb7a27?pvs=4)
