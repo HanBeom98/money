@@ -13,8 +13,8 @@
 - **Eureka Server**: 각 마이크로서비스의 동적 검색 및 로드 밸런싱 제공.
 
 ## 🛠 기술 스택
-- **Backend**: Spring Boot, Spring Cloud Netflix Eureka, Spring Cloud Gateway, Spring Batch, Spring Security, JPA (Hibernate), MySQL, JWT
-- **Cloud**: AWS (RDS, EC2)
+- **Backend**: JAVA21, Spring Boot, Spring Cloud Netflix Eureka, Spring Cloud Gateway, Spring Batch, Spring Security, JPA (Hibernate), MySQL, JWT
+- **Cloud**: AWS (RDS, EC2, S3(중단))
 - **Build Tool**: Gradle
 - **Version Control**: GitHub
 - **API Documentation**: SpringDoc OpenAPI
