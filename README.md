@@ -51,4 +51,4 @@
 
 [부가 설명- Notion 링크](https://third-amber-e30.notion.site/Money-10c720a78baf800c8819d97aeddb7a27?pvs=4)
 
-[프로젝트 일지- Notion 링크](https://third-amber-e30.notion.site/Money-10c720a78baf800c8819d97aeddb7a27?pvs=4)
+[프로젝트 일지- Notion 링크](https://third-amber-e30.notion.site/b936b46b11ba4c1fa4de150b831b8b76?pvs=4)
