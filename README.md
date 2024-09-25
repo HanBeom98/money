@@ -27,7 +27,7 @@
 - **API Gateway**: 클라이언트 요청을 각 서비스로 라우팅하고, 트래픽을 분산 처리합니다.
 - **Eureka Server**: 각 서비스는 Eureka에 등록되며, 이를 통해 동적으로 서비스 위치를 검색하고 연결됩니다.
 
-![money drawio](https://github.com/user-attachments/assets/c6bc7a53-3b16-400c-8348-96c47dd5eb31)
+![제목 없는 다이어그램 drawio](https://github.com/user-attachments/assets/e78f9086-9fa9-42bf-bf45-43c261cf9d5a)
 
 
 ## 🚀 성능 최적화
