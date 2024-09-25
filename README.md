@@ -50,3 +50,4 @@
 - **통계 대시보드**: 실시간 통계 데이터를 시각화하여 사용자에게 직관적인 정보를 제공할 예정.
 
 [부가 설명- Notion 링크](https://third-amber-e30.notion.site/Money-10c720a78baf800c8819d97aeddb7a27?pvs=4)
+[프로젝트 일지- Notion 링크](https://third-amber-e30.notion.site/Money-10c720a78baf800c8819d97aeddb7a27?pvs=4)
